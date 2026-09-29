@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213A">
+<link rel="manifest" href="manifest.json">
+<title>Modão Novo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --denim:#14213A; --denim2:#1D2E4F; --denim3:#2A3F66;
+  --texto:#E9EEF7; --mudo:#8FA0BF; --ipe:#F5C518; --couro:#B5651D;
+}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--denim);color:var(--texto);font-family:Figtree,system-ui,sans-serif}
+body{min-height:100vh;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+header{padding:28px 20px 12px;max-width:640px;margin:auto}
+h1{font-family:'Alfa Slab One',serif;font-weight:400;font-size:2.1rem;line-height:1;color:var(--ipe);letter-spacing:.5px}
+.sub{display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--mudo);font-size:.85rem}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,.item:focus-visible{outline:2px solid var(--ipe);outline-offset:2px}
+.icon{width:36px;height:36px;border-radius:50%;background:var(--denim2);display:grid;place-items:center;font-size:1.1rem}
+.icon.girando{animation:gira 1s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+main{max-width:640px;margin:auto;padding:0 20px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--denim2);border-radius:12px;padding:4px;margin:14px 0}
+.seg button{padding:10px;border-radius:9px;font-weight:600;color:var(--mudo)}
+.seg button[aria-pressed=true]{background:var(--ipe);color:#1a1300}
+.chips{display:flex;gap:8px;margin-bottom:14px}
+.chips button{padding:7px 14px;border-radius:99px;background:var(--denim2);font-size:.85rem;color:var(--mudo)}
+.chips button[aria-pressed=true]{background:var(--denim3);color:var(--texto);box-shadow:inset 0 -2px 0 var(--ipe)}
+#ytbox{display:none;position:sticky;top:0;z-index:5;margin:0 -20px 12px;background:#000}
+#ytbox.on{display:block}
+#ytwrap{aspect-ratio:16/9;width:100%}
+#ytwrap iframe{width:100%;height:100%}
+ul{list-style:none;padding:0}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:8px;border-radius:12px;cursor:pointer}
+.item:hover{background:var(--denim2)}
+.item.tocando{background:var(--denim2);box-shadow:inset 3px 0 0 var(--ipe)}
+.item img{width:56px;height:56px;border-radius:8px;object-fit:cover;background:var(--denim3)}
+.t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a{color:var(--mudo);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.novo{font-size:.75rem;color:#1a1300;background:var(--ipe);border-radius:6px;padding:2px 7px;font-weight:700}
+.quando{font-size:.78rem;color:var(--mudo)}
+.msg{padding:28px 8px;color:var(--mudo);line-height:1.5}
+.msg b{color:var(--texto)}
+.msg button{color:var(--ipe);text-decoration:underline}
+#player{position:fixed;left:0;right:0;bottom:0;background:var(--denim2);border-top:1px solid var(--denim3);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:10}
+.pin{max-width:640px;margin:auto;display:grid;grid-template-columns:44px 1fr auto auto auto;gap:12px;align-items:center}
+.pin img{width:44px;height:44px;border-radius:6px;background:var(--denim3);object-fit:cover}
+.ctl{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem}
+.ctl.play{background:var(--ipe);color:#1a1300;font-size:1.2rem}
+#barra{height:3px;background:var(--denim3);max-width:640px;margin:8px auto 0;border-radius:2px;overflow:hidden}
+#barra i{display:block;height:100%;width:0;background:var(--ipe)}
+dialog{background:var(--denim2);color:var(--texto);border:1px solid var(--denim3);border-radius:16px;padding:22px;width:min(92vw,460px)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h2{font-family:'Alfa Slab One',serif;font-weight:400;color:var(--ipe);margin-bottom:10px}
+dialog p{color:var(--mudo);font-size:.9rem;line-height:1.5;margin-bottom:10px}
+dialog ol{color:var(--mudo);font-size:.88rem;line-height:1.6;padding-left:20px;margin-bottom:12px}
+dialog input{width:100%;padding:11px;border-radius:9px;border:1px solid var(--denim3);background:var(--denim);color:var(--texto);font:inherit;margin-bottom:12px}
+.row{display:flex;gap:10px;justify-content:flex-end}
+.row button{padding:10px 16px;border-radius:9px;background:var(--denim3);font-weight:600}
+.row .ok{background:var(--ipe);color:#1a1300}
+@media (prefers-reduced-motion:reduce){.icon.girando{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Modão Novo</h1>
+  <div class="sub">
+    <button class="icon" id="btnAtualizar" aria-label="Atualizar agora">↻</button>
+    <span id="status">Buscando lançamentos…</span>
+  </div>
+</header>
+
+<main>
+  <div class="seg" role="group" aria-label="Tipo de reprodução">
+    <button id="segPrev" aria-pressed="true">Prévias de 30s</button>
+    <button id="segYt" aria-pressed="false">Completas</button>
+  </div>
+  <div class="chips" role="group" aria-label="Período">
+    <button data-dias="7" aria-pressed="false">Esta semana</button>
+    <button data-dias="30" aria-pressed="true">Este mês</button>
+    <button data-dias="365" aria-pressed="false">Este ano</button>
+  </div>
+  <div id="ytbox"><div id="ytwrap"><div id="ytplayer"></div></div></div>
+  <ul id="lista"></ul>
+</main>
+
+<div id="player" hidden>
+  <div class="pin">
+    <img id="pCapa" alt="">
+    <div style="min-width:0"><div class="t" id="pTitulo"></div><div class="a" id="pArtista"></div></div>
+    <button class="ctl" id="btnAnt" aria-label="Anterior">⏮</button>
+    <button class="ctl play" id="btnPlay" aria-label="Tocar ou pausar">▶</button>
+    <button class="ctl" id="btnProx" aria-label="Próxima">⏭</button>
+  </div>
+  <div id="barra"><i></i></div>
+</div>
+
+<dialog id="dlgChave">
+  <h2>Ouvir músicas completas</h2>
+  <p>As prévias vêm da Apple e duram 30 segundos. Para tocar a música inteira, o app usa o YouTube com a sua chave gratuita:</p>
+  <ol>
+    <li>Abra console.cloud.google.com e crie um projeto.</li>
+    <li>Ative a “YouTube Data API v3”.</li>
+    <li>Crie uma chave de API e cole abaixo.</li>
+  </ol>
+  <input id="inpChave" placeholder="Cole sua chave de API aqui" autocomplete="off">
+  <div class="row"><button id="cancelaChave">Cancelar</button><button class="ok" id="salvaChave">Salvar chave</button></div>
+</dialog>
+
+<script>
+/* ---------- armazenamento (com fallback) ---------- */
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k]??null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
+};
+const $ = s => document.querySelector(s);
+
+/* ---------- estado ---------- */
+const INTERVALO_MS = 30*60*1000;     // atualiza a cada 30 min
+const VALIDADE_YT_MS = 6*60*60*1000; // YouTube: cache de 6h (protege a cota grátis)
+let modo = 'prev';                   // 'prev' | 'yt'
+let dias = 30;
+let faixas = [];                     // lista atual (já filtrada por período)
+let atual = -1;
+let ultimaAtualizacao = null;
+const audio = new Audio();
+
+/* ---------- utilidades ---------- */
+const hora = d => d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+function quando(iso){
+  const d = Math.floor((Date.now()-new Date(iso))/864e5);
+  if(d<=0) return 'hoje';
+  if(d===1) return 'ontem';
+  if(d<30) return `há ${d} dias`;
+  return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+}
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- fonte 1: Apple (iTunes Search) — grátis, sem chave ---------- */
+async function buscarApple(){
+  const termos = ['sertanejo','sertanejo universitário','sertanejo lançamento','modão sertanejo','sertanejo ao vivo','piseiro sertanejo'];
+  const respostas = await Promise.all(termos.map(t =>
+    fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(t)}&country=BR&media=music&entity=song&limit=200`)
+      .then(r=>r.json()).then(j=>j.results||[]).catch(()=>[])
+  ));
+  const vistos = new Map();
+  const agora = Date.now();
+  for(const t of respostas.flat()){
+    if(!t.previewUrl || !/sertanej/i.test(t.primaryGenreName||'')) continue;
+    if(new Date(t.releaseDate) > agora) continue;
+    if(!vistos.has(t.trackId)) vistos.set(t.trackId,{
+      id:'a'+t.trackId, titulo:t.trackName, artista:t.artistName,
+      capa:(t.artworkUrl100||'').replace('100x100','300x300'),
+      data:t.releaseDate, audio:t.previewUrl
+    });
+  }
+  return [...vistos.values()].sort((a,b)=>new Date(b.data)-new Date(a.data));
+}
+
+/* ---------- fonte 2: YouTube Data API (chave gratuita do usuário) ---------- */
+async function buscarYouTube(){
+  const chave = store.get('yt_key');
+  if(!chave) throw new Error('sem-chave');
+  const cache = JSON.parse(store.get('yt_cache')||'null');
+  if(cache && Date.now()-cache.t < VALIDADE_YT_MS) return cache.v;
+  const desde = new Date(Date.now()-60*864e5).toISOString();
+  const consultas = ['sertanejo lançamento','sertanejo clipe oficial','modão sertanejo novo'];
+  const vistos = new Map();
+  for(const q of consultas){
+    const u = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&videoEmbeddable=true&regionCode=BR&relevanceLanguage=pt&order=date&maxResults=25&publishedAfter=${desde}&q=${encodeURIComponent(q)}&key=${chave}`;
+    const r = await fetch(u); const j = await r.json();
+    if(j.error) throw new Error(j.error.message||'erro-api');
+    for(const it of j.items||[]){
+      vistos.set(it.id.videoId,{
+        id:'y'+it.id.videoId, yt:it.id.videoId,
+        titulo:decodeHtml(it.snippet.title), artista:decodeHtml(it.snippet.channelTitle),
+        capa:it.snippet.thumbnails.medium?.url||'', data:it.snippet.publishedAt
+      });
+    }
+  }
+  const v = [...vistos.values()].sort((a,b)=>new Date(b.data)-new Date(a.data));
+  store.set('yt_cache',JSON.stringify({t:Date.now(),v}));
+  return v;
+}
+function decodeHtml(s){ const t=document.createElement('textarea'); t.innerHTML=s; return t.value; }
+
+/* ---------- carregar e mostrar ---------- */
+let todas = [];
+async function atualizar(forcar=false){
+  $('#btnAtualizar').classList.add('girando');
+  $('#status').textContent = 'Buscando lançamentos…';
+  try{
+    if(modo==='yt' && forcar) store.set('yt_cache','null');
+    todas = modo==='yt' ? await buscarYouTube() : await buscarApple();
+    ultimaAtualizacao = new Date();
+    $('#status').textContent = `Atualizado às ${hora(ultimaAtualizacao)}`;
+    store.set('cache_'+modo, JSON.stringify({t:Date.now(),v:todas}));
+    desenhar();
+  }catch(e){
+    const salvo = JSON.parse(store.get('cache_'+modo)||'null');
+    if(e.message==='sem-chave'){
+      $('#lista').innerHTML = `<li class="msg"><b>Falta a chave do YouTube.</b><br>Ela é grátis e leva 2 minutos. <button id="abrirChave">Configurar agora</button></li>`;
+      $('#abrirChave').onclick = ()=>$('#dlgChave').showModal();
+      $('#status').textContent = 'Chave necessária';
+    }else if(salvo){
+      todas = salvo.v; desenhar();
+      $('#status').textContent = `Sem conexão. Mostrando lista de ${hora(new Date(salvo.t))}`;
+    }else{
+      $('#lista').innerHTML = `<li class="msg"><b>Não deu para carregar.</b><br>Confira a internet e toque em ↻ para tentar de novo.</li>`;
+      $('#status').textContent = 'Falha ao atualizar';
+    }
+  }finally{
+    $('#btnAtualizar').classList.remove('girando');
+  }
+}
+
+function desenhar(){
+  const limite = Date.now()-dias*864e5;
+  faixas = todas.filter(t=>new Date(t.data)>=limite);
+  const ul = $('#lista');
+  if(!faixas.length){
+    ul.innerHTML = `<li class="msg">Nada lançado neste período. Tente “Este ano”.</li>`;
+    return;
+  }
+  ul.innerHTML = faixas.map((t,i)=>{
+    const novo = (Date.now()-new Date(t.data))<3*864e5;
+    return `<li class="item ${i===atual?'tocando':''}" tabindex="0" data-i="${i}">
+      <img src="${esc(t.capa)}" alt="" loading="lazy">
+      <div style="min-width:0"><div class="t">${esc(t.titulo)}</div><div class="a">${esc(t.artista)}</div></div>
+      ${novo?'<span class="novo">Novo</span>':`<span class="quando">${quando(t.data)}</span>`}
+    </li>`;
+  }).join('');
+}
+
+/* ---------- player ---------- */
+let ytp=null, ytPronto=null;
+function carregarYT(){
+  if(ytPronto) return ytPronto;
+  ytPronto = new Promise(res=>{
+    const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+    window.onYouTubeIframeAPIReady = ()=>{
+      ytp = new YT.Player('ytplayer',{
+        playerVars:{playsinline:1,rel:0},
+        events:{
+          onReady:()=>res(ytp),
+          onStateChange:e=>{
+            if(e.data===YT.PlayerState.ENDED) proxima();
+            atualizaBotao(e.data===YT.PlayerState.PLAYING);
+          }
+        }
+      });
+    };
+  });
+  return ytPronto;
+}
+
+async function tocar(i){
+  if(i<0||i>=faixas.length) return;
+  atual=i; const t=faixas[i];
+  $('#player').hidden=false;
+  $('#pCapa').src=t.capa; $('#pTitulo').textContent=t.titulo; $('#pArtista').textContent=t.artista;
+  document.querySelectorAll('.item').forEach(el=>el.classList.toggle('tocando',+el.dataset.i===i));
+  if(t.yt){
+    audio.pause();
+    $('#ytbox').classList.add('on');
+    const p = await carregarYT(); p.loadVideoById(t.yt);
+  }else{
+    if(ytp&&ytp.pauseVideo) ytp.pauseVideo();
+    audio.src=t.audio; audio.play().catch(()=>{});
+  }
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata = new MediaMetadata({title:t.titulo,artist:t.artista,artwork:t.capa?[{src:t.capa,sizes:'300x300'}]:[]});
+  }
+}
+const proxima = ()=>tocar(atual+1<faixas.length?atual+1:0);
+const anterior = ()=>tocar(atual>0?atual-1:faixas.length-1);
+function atualizaBotao(tocando){ $('#btnPlay').textContent = tocando?'⏸':'▶'; }
+function alternar(){
+  const t=faixas[atual]; if(!t) return;
+  if(t.yt&&ytp){ ytp.getPlayerState()===1?ytp.pauseVideo():ytp.playVideo(); }
+  else{ audio.paused?audio.play():audio.pause(); }
+}
+audio.addEventListener('play',()=>atualizaBotao(true));
+audio.addEventListener('pause',()=>atualizaBotao(false));
+audio.addEventListener('ended',proxima);
+audio.addEventListener('timeupdate',()=>{ if(audio.duration) $('#barra i').style.width=(audio.currentTime/audio.duration*100)+'%'; });
+if('mediaSession' in navigator){
+  navigator.mediaSession.setActionHandler('nexttrack',proxima);
+  navigator.mediaSession.setActionHandler('previoustrack',anterior);
+  navigator.mediaSession.setActionHandler('play',alternar);
+  navigator.mediaSession.setActionHandler('pause',alternar);
+}
+
+/* ---------- eventos ---------- */
+$('#lista').addEventListener('click',e=>{ const li=e.target.closest('.item'); if(li) tocar(+li.dataset.i); });
+$('#lista').addEventListener('keydown',e=>{ if(e.key==='Enter'){ const li=e.target.closest('.item'); if(li) tocar(+li.dataset.i);} });
+$('#btnPlay').onclick=alternar; $('#btnProx').onclick=proxima; $('#btnAnt').onclick=anterior;
+$('#btnAtualizar').onclick=()=>atualizar(true);
+document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{
+  dias=+b.dataset.dias; atual=-1;
+  document.querySelectorAll('.chips button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  desenhar();
+});
+function trocarModo(m){
+  if(m===modo) return;
+  modo=m; atual=-1;
+  $('#segPrev').setAttribute('aria-pressed',m==='prev');
+  $('#segYt').setAttribute('aria-pressed',m==='yt');
+  if(m==='prev') $('#ytbox').classList.remove('on');
+  atualizar();
+}
+$('#segPrev').onclick=()=>trocarModo('prev');
+$('#segYt').onclick=()=>trocarModo('yt');
+$('#salvaChave').onclick=()=>{
+  const k=$('#inpChave').value.trim();
+  if(k){ store.set('yt_key',k); store.set('yt_cache','null'); $('#dlgChave').close(); atualizar(true); }
+};
+$('#cancelaChave').onclick=()=>$('#dlgChave').close();
+
+/* ---------- atualização automática ---------- */
+setInterval(()=>atualizar(),INTERVALO_MS);                       // enquanto o app está aberto
+document.addEventListener('visibilitychange',()=>{               // ao voltar para o app
+  if(!document.hidden && (!ultimaAtualizacao || Date.now()-ultimaAtualizacao>INTERVALO_MS)) atualizar();
+});
+
+/* ---------- iniciar ---------- */
+atualizar();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
